@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>OpenWeather ASP.NET Core Web API</title>
+</head>
+<body>
+<div class="forecastForm">
+    <h3>Get forecast</h3>
+    <label>City</label><br />
+    <input type="text" id="city" /> <br /><br />
+    <label>Metric (Kelvin, Celsius, Fahrenheit)</label><br />
+    <input type="text" id="metrics" /><br /><br />
+    <label>Lang (En, Ua, Ru)</label><br />
+    <input type="text" id="lang" /><br /><br />
+    <label>Sort by ([column name], [asc,desc])</label><br />
+    <input type="text" id="sortBy" /><br /><br />
+    <input type="submit" id="submitForecast" value="Forecast" />
+</div>
+<table>
+    <thead>
+    <tr><td>Day
+    </td><td>City
+    </td><td>Wind
+    </td><td>Clouds
+    </td><td>Temperature
+    </td><td>TempMin
+    </td><td>TempMax
+    </td><td>Pressure
+    </td><td>Humidity
+    </td></tr>
+    </thead>
+    <tbody id="records_table"></tbody>
+</table>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script>
+        $('#submitForecast').click(function (e) {
+            e.preventDefault();
+
+            var city = $('#city').val();
+            var metrics = $('#metrics').val();
+            var lang = $('#lang').val();
+            var sortBy = $('#sortBy').val();
+
+            $.ajax({
+                type: 'GET',
+                url: 'api/weather/getweather?city=' + city + '&metrics=' + metrics + '&lang=' + lang + '&sortBy=' + sortBy
+            }).success(function (response) {
+                var trHTML = '';
+                $.each(response, function (i, it) {
+                    trHTML +=
+                        '<tr><td>' + it.day +
+                        '</td><td>' + it.city +
+                        '</td><td>' + it.wind +
+                        '</td><td>' + it.clouds +
+                        '</td><td>' + it.temperature +
+                        '</td><td>' + it.tempMin +
+                        '</td><td>' + it.tempMax +
+                        '</td><td>' + it.pressure +
+                        '</td><td>' + it.humidity +
+                        '</td></tr>';
+                });
+                $('#records_table').empty().append(trHTML);
+            }).fail(function (data) {
+                console.log(data);
+            });
+        });
+    </script>
+</body>
+</html>

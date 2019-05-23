@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using OpenWeatherSolution.Controllers.Dtos;
+using OpenWeatherSolution.Extensions;
 using OpenWeatherSolution.Managers;
 using OpenWeatherSolution.Models;
 using OpenWeatherSolution.Models.Dtos;

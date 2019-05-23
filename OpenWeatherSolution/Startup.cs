@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenWeatherSolution.Controllers.Dtos;
+using OpenWeatherSolution.Infrastructure;
 using OpenWeatherSolution.Managers;
 using OpenWeatherSolution.Models;
 
@@ -46,6 +47,9 @@ namespace OpenWeatherSolution
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
             app.UseMvc();
         }

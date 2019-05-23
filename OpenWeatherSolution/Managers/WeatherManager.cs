@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using OpenWeatherSolution.Controllers.Dtos;
+using OpenWeatherSolution.Extensions;
 using OpenWeatherSolution.Models;
 using OpenWeatherSolution.Models.Dtos;
 using OpenWeatherSolution.Services;
