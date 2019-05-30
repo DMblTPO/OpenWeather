@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace OpenWeatherSolution.Models.Dtos
+namespace OpenWeatherSolution.Managers.Dtos
 {
     public class ForecastDto
     {
@@ -36,8 +36,14 @@ namespace OpenWeatherSolution.Models.Dtos
             public double Humidity { get; set; }
         }
 
-        [JsonProperty(PropertyName = "dt")]
-        public int Day { get; set; }
+        public class InnerWeatherDto
+        {
+            [JsonProperty(PropertyName = "description")]
+            public string Description { get; set; }
+        }
+
+        [JsonProperty(PropertyName = "dt_txt")]
+        public string Day { get; set; }
 
         [JsonProperty(PropertyName = "main")]
         public MainDto Main { get; set; }
@@ -47,5 +53,8 @@ namespace OpenWeatherSolution.Models.Dtos
 
         [JsonProperty(PropertyName = "clouds")]
         public CloudsDto Clouds { get; set; }
+
+        [JsonProperty(PropertyName = "weather")]
+        public InnerWeatherDto[] Weather { get; set; }
     }
 }

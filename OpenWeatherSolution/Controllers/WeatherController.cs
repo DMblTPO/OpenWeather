@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using OpenWeatherSolution.Controllers.Dtos;
 using OpenWeatherSolution.Extensions;
 using OpenWeatherSolution.Managers;
 using OpenWeatherSolution.Models;
-using OpenWeatherSolution.Models.Dtos;
 using OpenWeatherSolution.StandartTypes;
 
 namespace OpenWeatherSolution.Controllers
@@ -31,9 +31,28 @@ namespace OpenWeatherSolution.Controllers
         }
 
         [HttpGet("GetWeather")]
-        public async Task<ActionResult> GetWeatherAsync(GetWeatherDto dto)
+        public async Task<WeatherDto[]> GetWeatherAsync(GetWeatherDto dto)
         {
-            return Ok(await _manager.GetForecastAsync(dto.City, dto.Metrics.UnitsMap(), Enum.Parse<Langs>(dto.Lang), dto.SortBy));
+            var weathers = await _manager.GetForecastAsync(dto.City, dto.Metrics.UnitsMap(),
+                Enum.Parse<Langs>(dto.Lang), dto.SortBy);
+
+            return weathers
+                .GroupBy(x => x.Date.Day)
+                .Select(x => x.First(xx => xx.Date.TimeOfDay >= TimeSpan.FromHours(12)))
+                .Select(x => new WeatherDto
+                {
+                    City = x.City,
+                    Date = x.Date.ToString("dd MMM yyyy"),
+                    Wind = x.Wind,
+                    Clouds = x.Clouds,
+                    Temperature = x.Temperature,
+                    TempMin = x.TempMin,
+                    TempMax = x.TempMax,
+                    Pressure = x.Pressure,
+                    Humidity = x.Humidity,
+                    Description = x.Description
+                })
+                .ToArray();
         }
 
         [HttpPost("SaveWeather")]

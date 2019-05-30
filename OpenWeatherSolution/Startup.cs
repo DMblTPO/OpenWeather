@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OpenWeatherSolution;
+using Newtonsoft.Json;
 using OpenWeatherSolution.Infrastructure;
 using OpenWeatherSolution.Managers;
 using OpenWeatherSolution.Middleware;
@@ -46,10 +46,29 @@ namespace OpenWeatherSolution
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}
+            //else
+            //{
+            app.UseExceptionHandler(err =>
             {
-                app.UseDeveloperExceptionPage();
-            }
+                err.Run(async ctx =>
+                {
+                    ctx.Response.StatusCode = 400;
+                    ctx.Response.ContentType = "application/json";
+                    var pathFeature = ctx.Features.Get<IExceptionHandlerPathFeature>();
+                    var exception = pathFeature?.Error;
+                    var errorMsg = exception != null ? exception.Message : "Unexpected error";
+                    await ctx.Response
+                        .WriteAsync(JsonConvert.SerializeObject(new
+                        {
+                            error = errorMsg
+                        }));
+                });
+            });
+            //}
 
             app.UseDefaultFiles();
             app.UseStaticFiles();

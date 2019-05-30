@@ -4,10 +4,11 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using OpenWeatherSolution.Controllers.Dtos;
 using OpenWeatherSolution.Extensions;
+using OpenWeatherSolution.Managers.Dtos;
 using OpenWeatherSolution.Models;
-using OpenWeatherSolution.Models.Dtos;
 using OpenWeatherSolution.Services;
 using OpenWeatherSolution.StandartTypes;
+using WeatherDto = OpenWeatherSolution.Managers.Dtos.WeatherDto;
 
 namespace OpenWeatherSolution.Managers
 {
@@ -21,7 +22,7 @@ namespace OpenWeatherSolution.Managers
 
     public class WeatherManager : IWeatherManager
     {
-        private WeatherContext _dbContext;
+        private readonly WeatherContext _dbContext;
 
         public WeatherManager(WeatherContext dbContext)
         {
@@ -35,14 +36,15 @@ namespace OpenWeatherSolution.Managers
             return new Weather
             {
                 City = city,
-                Day = DateTime.FromBinary(dto.Day),
+                Date = DateTime.Parse(dto.Day),
                 Temperature = dto.Main.Temperature,
                 TempMin = dto.Main.TempMin,
                 TempMax = dto.Main.TempMax,
                 Pressure = dto.Main.Pressure,
                 Humidity = dto.Main.Humidity,
                 Wind = dto.Wind.Speed,
-                Clouds = dto.Clouds.All
+                Clouds = dto.Clouds.All,
+                Description = dto.Weather[0]?.Description
             };
         }
 
@@ -54,14 +56,15 @@ namespace OpenWeatherSolution.Managers
                 .Select(dto => new Weather
                 {
                     City = city,
-                    Day = DateTime.FromBinary(dto.Day),
+                    Date = DateTime.Parse(dto.Day),
                     Temperature = dto.Main.Temperature,
                     TempMin = dto.Main.TempMin,
                     TempMax = dto.Main.TempMax,
                     Pressure = dto.Main.Pressure,
                     Humidity = dto.Main.Humidity,
                     Wind = dto.Wind.Speed,
-                    Clouds = dto.Clouds.All
+                    Clouds = dto.Clouds.All,
+                    Description = dto.Weather[0]?.Description
                 });
             var orderedList = list;
             if (sortBy != null)
@@ -80,7 +83,7 @@ namespace OpenWeatherSolution.Managers
         {
               var weatherDb = await _dbContext.Weathers
                   .Where(x => x.City.Equals(weather.City, StringComparison.InvariantCultureIgnoreCase) &&
-                              x.Day == weather.Day)
+                              x.Date == weather.Date)
                   .FirstOrDefaultAsync();
               if (weatherDb != null)
               {
@@ -93,7 +96,7 @@ namespace OpenWeatherSolution.Managers
         public async Task<Weather> LoadWeatherAsync(string city)
             => await _dbContext
                 .Weathers
-                .OrderByDescending(w => w.Day)
+                .OrderByDescending(w => w.Date)
                 .FirstOrDefaultAsync(x => x.City.Equals(city, StringComparison.InvariantCultureIgnoreCase));
     }
 }

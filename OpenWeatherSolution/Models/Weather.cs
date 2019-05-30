@@ -8,7 +8,7 @@ namespace OpenWeatherSolution.Models
     {
         public int Id { get; set; }
 
-        public DateTime Day { get; set; }
+        public DateTime Date { get; set; }
 
         public string City { get; set; }
 
@@ -25,7 +25,8 @@ namespace OpenWeatherSolution.Models
         public double Pressure { get; set; }
         
         public double Humidity { get; set; }
-        
+
+        public string Description { get; set; }
     }
 
     public class WeatherContext : DbContext

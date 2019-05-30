@@ -31,8 +31,11 @@ namespace OpenWeatherSolution.Middleware
                     await _next(context);
                 }
             }
-
-            await context.Response.WriteAsync("Missed or wrong AppId");
+            else
+            {
+                context.Response.StatusCode = 403;
+                await context.Response.WriteAsync("Missed or wrong AppId");
+            }
         }
     }
 
